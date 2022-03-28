@@ -23,7 +23,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.this.id
-  tags = merge(var.tags, { "Name" = format("%s-%s-igw", var.appname, var.env) }) 
+  tags   = merge(var.tags, { "Name" = format("%s-%s-igw", var.appname, var.env) })
 }
 
 resource "aws_route_table" "public" {
