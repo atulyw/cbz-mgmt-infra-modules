@@ -24,4 +24,30 @@ module "alb" {
   appname            = "iata"
   internal           = true
   load_balancer_type = "application"
+  listener_rule = {
+    laptop = {
+      priority = "10"
+      type = "forward"
+      target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:041744643314:targetgroup/test-tg/8b196113adeb98de"
+      path_pattern = ["/laptop/*"]
+    }
+    mobile = {
+      priority = "20"
+      type = "forward"
+      target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:041744643314:targetgroup/test-tg/8b196113adeb98de"
+      path_pattern = ["/mobile/*"]
+    }
+    home = {
+      priority = "30"
+      type = "forward"
+      target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:041744643314:targetgroup/test-tg/8b196113adeb98de"
+      path_pattern = ["/home/*"]
+    }
+    cloths = {
+      priority = "40"
+      type = "forward"
+      target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:041744643314:targetgroup/test-tg/8b196113adeb98de"
+      path_pattern = ["/cloths/*"]
+    }
   }
+}
