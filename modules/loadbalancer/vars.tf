@@ -19,7 +19,29 @@ variable "tags" {
   default = {}
 }
 
-variable "listener_rule" {
- type = any
- default = {}
+variable "security_groups" {
+  type = list
 }
+
+variable "subnets" {
+  type = list
+}
+# variable "listener_rule" {
+#   type    = any
+#   default = {}
+# }
+
+# variable "https_port" {
+#   type    = string
+#   default = "443"
+# }
+
+# variable "listener_protocol" {
+#   type    = string
+#   default = "HTTPS"
+# }
+
+# variable "target_groups" {
+#   type    = any
+#   default = {}
+# }
