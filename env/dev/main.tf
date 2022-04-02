@@ -22,6 +22,26 @@ module "alb" {
   internal           = var.internal
   load_balancer_type = var.load_balancer_type
   tags               = var.tags
-  security_groups    = ["sg-0fb16889347b6b0c4"]
+  security_groups    = [aws_security_group.allow_tls.id]
   subnets            = var.internal == "true" ? module.vpc.private_subnets : module.vpc.public_subnets
+}
+
+
+resource "aws_security_group" "allow_tls" {
+  name        = "allow_tls"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = module.vpc.vpc_id
+
+  dynamic "ingress" {
+    for_each = var.ingress
+    content {
+      description = lookup(ingress.value, "description", null)
+      from_port   = lookup(ingress.value, "port", null)
+      to_port     = lookup(ingress.value, "port", null)
+      protocol    = lookup(ingress.value, "protocol", "tcp")
+      cidr_blocks = lookup(ingress.value, "cidr_blocks", [var.vpc_cidr_block])
+    }
+
+  }
+  tags = var.tags
 }

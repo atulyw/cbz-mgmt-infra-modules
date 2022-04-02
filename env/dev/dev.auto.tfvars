@@ -10,3 +10,17 @@ tags = {
   owner      = "CBZ"
   owner_mail = "warghaneatul@gmail.com"
 }
+ingress = {
+  http = {
+    port        = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ssh = {
+    port        = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  mysql = {
+    port = 3306
+  }
+
+}

@@ -33,3 +33,6 @@ variable "load_balancer_type" {
   type = string
 }
 
+variable "ingress" {
+  type = any
+}
