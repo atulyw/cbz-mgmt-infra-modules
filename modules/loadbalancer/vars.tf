@@ -20,28 +20,23 @@ variable "tags" {
 }
 
 variable "security_groups" {
-  type = list
+  type = list(any)
 }
 
 variable "subnets" {
-  type = list
+  type = list(any)
 }
-# variable "listener_rule" {
-#   type    = any
-#   default = {}
-# }
 
-# variable "https_port" {
-#   type    = string
-#   default = "443"
-# }
+variable "target_groups" {
+  type    = any
+  default = {}
+}
 
-# variable "listener_protocol" {
-#   type    = string
-#   default = "HTTPS"
-# }
+variable "http_listener" {
+  type    = map(string)
+  default = {}
+}
 
-# variable "target_groups" {
-#   type    = any
-#   default = {}
-# }
+variable "vpc_id" {
+  type = string
+}

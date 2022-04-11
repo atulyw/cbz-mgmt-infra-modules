@@ -1,5 +1,5 @@
 output "public_subnets" {
- value = aws_subnet.public[*].id
+  value = aws_subnet.public[*].id
 }
 
 output "private_subnets" {
@@ -7,5 +7,5 @@ output "private_subnets" {
 }
 
 output "vpc_id" {
- value = aws_vpc.this.id
+  value = aws_vpc.this.id
 }

@@ -35,63 +35,64 @@ resource "aws_lb" "network" {
   tags = merge(var.tags, { "Name" = format("%s-%s-nlb", var.appname, var.env) })
 }
 
-# resource "aws_lb_listener" "this" {
-#   count             = var.load_balancer_type == "application" ? 1 : 0
-#   load_balancer_arn = aws_lb.application[count.index].arn
-#   port              = "80"
-#   protocol          = "HTTP"
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:041744643314:targetgroup/tg1/35dc4086725ebda3"
-#   }
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.application[0].arn
+  port              = lookup(var.http_listener, "port", "80")
+  protocol          = lookup(var.http_listener, "protocol", "HTTP")
+  default_action {
+    type = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Fixed response content"
+      status_code  = "200"
+    }
+  }
+}
 
-# }
+module "tg" {
+  source            = "./target_group"
+  for_each          = var.target_groups
+  listener_arn      = aws_lb_listener.http.arn
+  target_groups     = each.value
+  target_group_name = each.key
+  vpc_id            = var.vpc_id
+}
 
 
 # resource "aws_lb_listener_rule" "this" {
-#   for_each     = var.load_balancer_type == "application" ? var.listener_rule : null
-#   listener_arn = aws_lb_listener.this[0].arn
-#   priority     = each.value.priority
+#   count = length(var.target_groups)
+#   listener_arn = aws_lb_listener.http.arn
+#   priority     = lookup(var.target_groups, "priority", null)
 
-#   # default_action {
-#   #   type = "redirect"
-
-#   #   redirect {
-#   #     port        = "443"
-#   #     protocol    = "HTTPS"
-#   #     status_code = "HTTP_301"
-#   #   }
-#   # }
 #   action {
-#     type             = each.value.type
-#     target_group_arn = each.value.target_group_arn
+#     type             = "forward"
+#     target_group_arn = element([for tg in aws_lb_target_group.this : tg.arn], count.index)
 #   }
-
 #   condition {
 #     path_pattern {
-#       values = each.value.path_pattern
+#       values = [element([for pv in var.target_groups : pv.path_pattern], count.index)]
+#       #values = ["/test/*"]
 #     }
 #   }
 # }
 
-# resource "aws_lb_listener" "https" {
-#   for_each          = var.load_balancer_type == "application" ? var.listener_rule : null
-#   load_balancer_arn = aws_lb.application[count.index].arn
-#   port              = var.https_port
-#   protocol          = var.listener_protocol
-#   ssl_policy        = "ELBSecurityPolicy-2016-08"
-#   certificate_arn   = var.certificate_arn
-#   priority          = each.value.priority
-
-#   action {
-#     type             = each.value.type
-#     target_group_arn = each.value.target_group_arn
-#   }
-
-#   condition {
-#     path_pattern {
-#       values = each.value.path_pattern
-#     }
+# resource "aws_lb_target_group" "this" {
+#   for_each    = var.target_groups
+#   name        = each.key
+#   port        = lookup(each.value, "port", null)
+#   protocol    = lookup(each.value, "protocol", "HTTP")
+#   vpc_id      = var.vpc_id
+#   target_type = lookup(each.value, "target_type", null)
+#   health_check {
+#     enabled             = lookup(each.value, "enabled", true)
+#     healthy_threshold   = lookup(each.value, "healthy_threshold", null)
+#     interval            = lookup(each.value, "interval", null)
+#     matcher             = lookup(each.value, "matcher", null)
+#     path                = lookup(each.value, "path", null)
+#     port                = lookup(each.value, "port", null)
+#     protocol            = lookup(each.value, "protocol", null)
+#     timeout             = lookup(each.value, "timeout", null)
+#     unhealthy_threshold = lookup(each.value, "unhealthy_threshold", null)
 #   }
 # }
 
